@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chrome Extension Test Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .extension-container { 
+            border: 2px solid #ccc; 
+            margin: 20px 0; 
+            padding: 20px; 
+            border-radius: 8px;
+        }
+        .popup-container { width: 320px; height: 400px; }
+        .sidepanel-container { width: 400px; height: 600px; }
+        .options-container { width: 800px; height: 600px; }
+        iframe { width: 100%; height: 100%; border: none; border-radius: 4px; }
+        h2 { color: #333; margin-top: 0; }
+        .test-text { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Live Translator - Chrome Extension Test</h1>
+    
+    <div class="test-text">
+        <p>Test text for selection and translation:</p>
+        <p>Hello, world! This is a sample text that can be selected for testing the translation functionality.</p>
+        <p>Bonjour le monde! Ceci est un texte d'exemple en français.</p>
+        <p>¡Hola mundo! Este es un texto de muestra en español.</p>
+    </div>
+
+    <div class="extension-container popup-container">
+        <h2>Popup Interface</h2>
+        <iframe src="dist/popup/index.html"></iframe>
+    </div>
+
+    <div class="extension-container sidepanel-container">
+        <h2>Side Panel Interface</h2>
+        <iframe src="dist/sidepanel/index.html"></iframe>
+    </div>
+
+    <div class="extension-container options-container">
+        <h2>Options Page</h2>
+        <iframe src="dist/options/index.html"></iframe>
+    </div>
+
+    <script>
+        // Mock Chrome extension API for testing
+        if (!window.chrome) {
+            window.chrome = {
+                storage: {
+                    sync: {
+                        get: function(keys, callback) {
+                            // Mock storage data
+                            const mockData = {
+                                targetLanguage: 'es',
+                                autoTranslate: false,
+                                llmProvider: 'openai',
+                                llmApiKey: '',
+                                llmModel: 'gpt-3.5-turbo'
+                            };
+                            setTimeout(() => callback(mockData), 100);
+                        },
+                        set: function(data, callback) {
+                            console.log('Mock storage set:', data);
+                            if (callback) setTimeout(callback, 100);
+                        }
+                    }
+                },
+                runtime: {
+                    sendMessage: function(message, callback) {
+                        console.log('Mock runtime message:', message);
+                        // Mock responses
+                        if (message.action === 'translateText') {
+                            setTimeout(() => callback({
+                                translatedText: `[Translated to ${message.options.targetLanguage}] ${message.text}`,
+                                sourceLanguage: 'en',
+                                confidence: 0.95
+                            }), 500);
+                        }
+                        return true;
+                    },
+                    onMessage: {
+                        addListener: function(listener) {
+                            console.log('Mock message listener added');
+                        }
+                    },
+                    openOptionsPage: function() {
+                        console.log('Mock open options page');
+                    }
+                },
+                tabs: {
+                    query: function(queryInfo, callback) {
+                        setTimeout(() => callback([{
+                            id: 1,
+                            title: 'Test Page',
+                            url: 'http://localhost/test'
+                        }]), 100);
+                    },
+                    sendMessage: function(tabId, message, callback) {
+                        console.log('Mock tab message:', message);
+                        if (callback) setTimeout(() => callback({success: true}), 100);
+                    }
+                },
+                sidePanel: {
+                    open: function(options) {
+                        console.log('Mock side panel open:', options);
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
