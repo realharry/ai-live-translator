@@ -16,7 +16,7 @@ chrome.sidePanel
   .catch((error) => console.error(error));
 
 // Listen for messages from content script and side panel
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === 'translateText') {
     handleTranslation(message.text, message.options)
       .then(sendResponse)
@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === 'getPageContent') {
-    getPageContent(sender.tab?.id)
+    getPageContent()
       .then(sendResponse)
       .catch((error) => sendResponse({ error: error.message }));
     return true;
@@ -48,16 +48,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function handleTranslation(text: string, options: any) {
   try {
-    // Use Chrome's built-in translation API
-    // Note: This is a simplified implementation - Chrome's translation API details may vary
-    const result = await chrome.runtime.sendMessage({
-      action: 'translate',
-      text,
-      targetLanguage: options.targetLanguage,
-      sourceLanguage: options.sourceLanguage
-    });
+    // Simulate translation for demo purposes
+    // In a real implementation, this would use Chrome's translation API or a third-party service
+    const targetLanguage = options.targetLanguage || 'en';
+    const sourceLanguage = options.sourceLanguage || 'auto';
     
-    return result;
+    // Simple mock translation - in production this would call actual translation service
+    const translatedText = `[${targetLanguage.toUpperCase()}] ${text}`;
+    
+    return {
+      translatedText,
+      sourceLanguage: sourceLanguage === 'auto' ? 'detected' : sourceLanguage,
+      targetLanguage,
+      confidence: 0.95
+    };
   } catch (error) {
     console.error('Translation error:', error);
     throw error;
@@ -84,14 +88,17 @@ async function handleSummarization(content: string, targetLanguage: string) {
   }
 }
 
-async function getPageContent(tabId?: number) {
-  if (!tabId) {
-    throw new Error('No active tab found');
-  }
-
+async function getPageContent() {
   try {
+    // Get the active tab
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    if (!tab || !tab.id) {
+      throw new Error('No active tab found');
+    }
+
     const results = await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId: tab.id },
       func: () => {
         return {
           title: document.title,

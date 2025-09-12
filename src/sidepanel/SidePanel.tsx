@@ -29,8 +29,9 @@ export const SidePanel: React.FC = () => {
     getCurrentPageInfo();
 
     // Listen for text selection messages
-    chrome.runtime.onMessage.addListener((message) => {
+    const messageListener = (message: any, _sender: any, _sendResponse: any) => {
       if (message.action === 'textSelected') {
+        console.log('Text selected:', message.text);
         setSelectedText(message.text);
         setError(null);
         
@@ -38,8 +39,32 @@ export const SidePanel: React.FC = () => {
           translateText(message.text);
         }
       }
-    });
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    // Also check for any currently selected text when the panel opens
+    checkCurrentSelection();
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
   }, [autoTranslate]);
+
+  const checkCurrentSelection = async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab.id) {
+        const response = await chrome.tabs.sendMessage(tab.id, { action: 'getSelectedText' });
+        if (response && response.text && response.text.trim()) {
+          setSelectedText(response.text);
+        }
+      }
+    } catch (error) {
+      console.log('Could not check current selection:', error);
+      // This is expected if content script isn't loaded yet
+    }
+  };
 
   const getCurrentPageInfo = async () => {
     try {
@@ -140,14 +165,44 @@ export const SidePanel: React.FC = () => {
   };
 
   const translatePageContent = async () => {
+    setError(null);
+    
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab.id) {
-        await chrome.tabs.sendMessage(tab.id, {
-          action: 'translatePage',
-          targetLanguage
-        });
+      if (!tab.id) {
+        setError('No active tab found for translation.');
+        return;
       }
+
+      // Inject content script if not already present
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            // Check if our content script is already loaded
+            if (!window.hasOwnProperty('aiTranslatorContentLoaded')) {
+              throw new Error('Content script not loaded');
+            }
+          }
+        });
+      } catch (error) {
+        // Content script not loaded, inject it
+        console.log('Injecting content script...');
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['content.js']
+        });
+        
+        // Wait a moment for the script to initialize
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      await chrome.tabs.sendMessage(tab.id, {
+        action: 'translatePage',
+        targetLanguage
+      });
+
+      console.log('Page translation initiated');
     } catch (error) {
       console.error('Page translation error:', error);
       setError('Page translation failed. Please try again.');

@@ -1,3 +1,6 @@
+// Mark that content script is loaded
+(window as any).aiTranslatorContentLoaded = true;
+
 let isSelectionMode = false;
 let selectedElement: Element | null = null;
 
@@ -10,6 +13,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === 'getSelectedText') {
     const selectedText = window.getSelection()?.toString() || '';
     sendResponse({ text: selectedText });
+    return true; // Indicate that the response is asynchronous
   }
   
   if (message.action === 'translateSelectedText') {
