@@ -10,6 +10,11 @@ document.addEventListener('keyup', handleTextSelection);
 
 // Listen for messages from background script
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.action === 'ping') {
+    sendResponse({ status: 'ready' });
+    return true;
+  }
+  
   if (message.action === 'getSelectedText') {
     const selectedText = window.getSelection()?.toString() || '';
     sendResponse({ text: selectedText });
@@ -33,14 +38,15 @@ function handleTextSelection() {
   const selection = window.getSelection();
   const selectedText = selection?.toString().trim();
   
-  if (selectedText && selectedText.length > 0) {
-    // Send selected text to side panel
-    chrome.runtime.sendMessage({
-      action: 'textSelected',
-      text: selectedText,
-      url: window.location.href
-    });
-  }
+  // Send both selection events (text selected and text cleared)
+  chrome.runtime.sendMessage({
+    action: 'textSelected',
+    text: selectedText || '',
+    url: window.location.href
+  }).catch(error => {
+    // Ignore errors if sidepanel is not open
+    console.log('Could not send text selection message:', error);
+  });
 }
 
 async function translateSelectedText(targetLanguage: string) {

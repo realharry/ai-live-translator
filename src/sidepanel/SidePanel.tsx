@@ -49,12 +49,32 @@ export const SidePanel: React.FC = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
     };
-  }, [autoTranslate]);
+  }, [autoTranslate, targetLanguage]); // Added targetLanguage as dependency
+
+  const ensureContentScriptInjected = async (tabId: number) => {
+    try {
+      // Test if content script is already loaded
+      await chrome.tabs.sendMessage(tabId, { action: 'ping' });
+    } catch (error) {
+      // Content script not loaded, inject it
+      console.log('Injecting content script...');
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        files: ['content.js']
+      });
+      
+      // Wait a moment for the script to initialize
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  };
 
   const checkCurrentSelection = async () => {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab.id) {
+        // First ensure content script is injected
+        await ensureContentScriptInjected(tab.id);
+        
         const response = await chrome.tabs.sendMessage(tab.id, { action: 'getSelectedText' });
         if (response && response.text && response.text.trim()) {
           setSelectedText(response.text);
@@ -174,28 +194,8 @@ export const SidePanel: React.FC = () => {
         return;
       }
 
-      // Inject content script if not already present
-      try {
-        await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: () => {
-            // Check if our content script is already loaded
-            if (!window.hasOwnProperty('aiTranslatorContentLoaded')) {
-              throw new Error('Content script not loaded');
-            }
-          }
-        });
-      } catch (error) {
-        // Content script not loaded, inject it
-        console.log('Injecting content script...');
-        await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['content.js']
-        });
-        
-        // Wait a moment for the script to initialize
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
+      // Ensure content script is injected
+      await ensureContentScriptInjected(tab.id);
 
       await chrome.tabs.sendMessage(tab.id, {
         action: 'translatePage',
