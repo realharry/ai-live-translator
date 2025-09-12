@@ -1,0 +1,30 @@
+{
+  "name": "ai-live-translator",
+  "version": "1.0.0",
+  "description": "AI Live Translator is a Chrome extension that allows users to translate selected text or entire webpages into a specified language using the Chrome Translator API. The extension features a side panel UI for easy access to translation options and settings, as well as additional functionalities like summarizing content using LLM models.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "keywords": ["chrome-extension", "translator", "ai", "react", "typescript"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "^0.1.9",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "@vitejs/plugin-react": "^5.0.2",
+    "eslint": "^9.35.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  }
+}
