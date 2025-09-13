@@ -1,0 +1,15 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="60" fill="url(#grad1)" stroke="#4f46e5" stroke-width="2"/>
+  <g fill="white" font-family="Arial, sans-serif" font-weight="bold">
+    <text x="64" y="50" text-anchor="middle" font-size="24">AI</text>
+    <text x="64" y="85" text-anchor="middle" font-size="16">翻译</text>
+  </g>
+  <circle cx="100" cy="28" r="12" fill="#10b981"/>
+  <text x="100" y="33" text-anchor="middle" font-size="10" fill="white" font-weight="bold">T</text>
+</svg>

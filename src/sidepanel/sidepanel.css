@@ -1,0 +1,264 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f8f9fa;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidepanel {
+  background: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidepanel-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidepanel-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.page-info {
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+.page-title {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-url {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidepanel-content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.language-select {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.language-select label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.language-select-dropdown {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  width: 100%;
+}
+
+.language-select-dropdown:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.auto-translate {
+  margin-top: 12px;
+}
+
+.auto-translate label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.auto-translate input[type="checkbox"] {
+  margin: 0;
+}
+
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-button {
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.1s;
+  border: none;
+  font-size: 14px;
+}
+
+.action-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.action-button.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.action-button.secondary {
+  background: white;
+  color: #667eea;
+  border: 1px solid #667eea;
+}
+
+.action-button.secondary:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.action-button.tertiary {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.action-button.tertiary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-section {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.error-message {
+  margin: 0;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+.translation-display {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.translation-display.empty {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.translation-display h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.text-content {
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+  color: #1f2937;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.original-text {
+  margin-bottom: 20px;
+}
+
+.translation-result .loading {
+  margin: 0;
+  color: #667eea;
+  font-style: italic;
+}
+
+.translation-result .error {
+  margin: 0;
+  color: #dc2626;
+}
+
+.translation-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.summary-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.summary-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.summary-content {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.summary-meta {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
